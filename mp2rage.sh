@@ -1,26 +1,29 @@
 #!/bin/bash
-
-# FSL dependencies:
-#    fslmaths
-#    slicer
-#    bet
-#      bet2
-#      betsurf
-#      fast
-#      flirt
-#      fslmerge
-#      fslroi
-#      fslstats
-#      fslval
-#        fslhd
-#      immv
-#      imtest
-#      remove_ext
-#      standard_space_roi
-#        convert_xfm
-#        imcp
-#        ${FSLDIR}/data/standard/MNI152_T1_2mm.nii.gz
-#        ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask_dil.nii.gz
+#
+# Dependencies:
+#
+#   imagemagick
+#   FSL
+#     fslmaths
+#     slicer
+#     bet
+#       bet2
+#       betsurf
+#       fast
+#       flirt
+#       fslmerge
+#       fslroi
+#       fslstats
+#       fslval
+#         fslhd
+#       immv
+#       imtest
+#       remove_ext
+#       standard_space_roi
+#         convert_xfm
+#         imcp
+#         ${FSLDIR}/data/standard/MNI152_T1_2mm.nii.gz
+#         ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask_dil.nii.gz
 
 # Get input and output directories from the command line if given
 if [ "$#" -eq 2 ]; then
@@ -120,7 +123,7 @@ bet ${MAG1} ${OUTDIR}/mag1_brain -R -f 0.2 -g 0 -m
 slicer ${MP2RAGE} ${OUTDIR}/mag1_brain_mask -l red -x 0.55 ${OUTDIR}/x.png \
     -y 0.5 ${OUTDIR}/y.png -z 0.5 ${OUTDIR}/z.png
 montage -title "$PROJ $SUBJ $SESS $SCAN" -mode concatenate -tile 2x2 \
-    ${OUTDIR}/x.png ${OUTDIR}/y.png ${OUTDIR}/z.png ${OUTDIR}/report.pdf
+    ${OUTDIR}/x.png ${OUTDIR}/y.png ${OUTDIR}/z.png ${OUTDIR}/mp2rage.pdf
 
 # Clean up
 rm ${OUTDIR}/tmp*.nii.gz ${OUTDIR}/{x,y,z}.png ${OUTDIR}/mag1.nii.gz \
