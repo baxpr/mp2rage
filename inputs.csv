@@ -1,0 +1,7 @@
+code_path,PATH,Path to this code in the repo
+matlab_bin,PATH,Matlab executable
+nii_dir,FILE,NIFTI resource of the MP2RAGE scan
+project,STRING,project
+subject,STRING,subject
+session,STRING,session
+scan,STRING,scan
