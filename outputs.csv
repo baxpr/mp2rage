@@ -1,3 +1,4 @@
 mp2rage.pdf,FILE,PDF
 mp2rage.nii.gz,FILE,MP2RAGE
+mp2rage_brain.nii.gz,FILE,MP2RAGE_MASKED
 mag1_brain_mask.nii.gz,FILE,MASK

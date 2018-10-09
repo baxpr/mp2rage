@@ -1,29 +1,8 @@
 #!/bin/bash
 #
 # Dependencies:
-#
 #   imagemagick
-#   FSL
-#     fslmaths
-#     slicer
-#     bet
-#       bet2
-#       betsurf
-#       fast
-#       flirt
-#       fslmerge
-#       fslroi
-#       fslstats
-#       fslval
-#         fslhd
-#       immv
-#       imtest
-#       remove_ext
-#       standard_space_roi
-#         convert_xfm
-#         imcp
-#         ${FSLDIR}/data/standard/MNI152_T1_2mm.nii.gz
-#         ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask_dil.nii.gz
+#   FSL 5.0
 
 # Set up for FSL
 source /code/fslconf.sh
@@ -121,6 +100,9 @@ fslmaths ${NUMREAL} -div ${DENOM} -add 1 ${MP2RAGE}
 MAG1=${OUTDIR}/mag1.nii.gz
 fslmaths ${MAGSQ[1]} -sqrt ${MAG1}
 bet ${MAG1} ${OUTDIR}/mag1_brain -R -f 0.2 -g 0 -m
+
+# Make masked MP2RAGE image
+fslmaths ${MP2RAGE} -mas ${OUTDIR}/mag1_brain ${OUTDIR}/mp2rage_brain
 
 # Make PDF
 slicer ${MP2RAGE} ${OUTDIR}/mag1_brain_mask -l red -x 0.55 ${OUTDIR}/x.png \
