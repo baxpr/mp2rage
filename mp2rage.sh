@@ -25,6 +25,9 @@
 #         ${FSLDIR}/data/standard/MNI152_T1_2mm.nii.gz
 #         ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask_dil.nii.gz
 
+# Set up for FSL
+source /code/fslconf.sh
+
 # Get input and output directories from the command line if given
 if [ "$#" -eq 2 ]; then
     INDIR="${1}"
@@ -77,10 +80,10 @@ fi
 # Magnitude squared images, then mp2rage denominator
 # (abs(GRE_TI1).^2 + abs(GRE_TI2).^2)
 echo Computing MP2RAGE with
-Echo "   ${REALS[0]}"
-Echo "   ${IMAGS[0]}"
-Echo "   ${REALS[1]}"
-Echo "   ${IMAGS[1]}"
+echo "   ${REALS[0]}"
+echo "   ${IMAGS[0]}"
+echo "   ${REALS[1]}"
+echo "   ${IMAGS[1]}"
 for n in 0 1 ; do
 	MAGSQ[n]=${OUTDIR}/tmp_magsq_${FTIME[n]}.nii.gz
 	fslmaths ${REALS[n]} -sqr ${OUTDIR}/tmp_rsqr
