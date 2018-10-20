@@ -1,0 +1,45 @@
+---
+moreauto: true
+inputs:
+  default:
+    container_path: MP2RAGE_v1.0.1.simg
+    container_source: shub://baxterprogers/MP2RAGE:v1.0.1
+    extraflags: ""
+  xnat:
+    scans:
+      - name: scan_t1
+        types: MP2RAGE
+        needs_qc: False
+        resources:
+          - resource: NIFTI
+            ftype: DIR
+            fdest: T1
+            varname: t1_dir
+outputs:
+  - path: OUT/mp2rage.pdf
+    type: FILE
+    resource: PDF
+  - path: OUT/mp2rage.nii.gz
+    type: FILE
+    resource: MP2RAGE
+  - path: OUT/mp2rage_brain.nii.gz
+    type: FILE
+    resource: MP2RAGE_MASKED
+  - path: OUT/mag1_brain_mask.nii.gz
+    type: FILE
+    resource: MASK
+command: >-
+  singularity
+  run
+  --bind $INDIR:/INPUTS
+  --bind $OUTDIR:/OUTPUTS
+  {container_path}
+  --t1_dir /INPUTS/{t1_dir}
+  -d /OUTPUTS/OUT
+  -a {assessor}
+attrs:
+  xsitype: proc:genProcData
+  walltime: '2:00:00'
+  memory: 8192
+  ppn: 1
+jobtemplate: singularity_job_template.txt
