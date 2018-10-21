@@ -1,5 +1,6 @@
 ---
 moreauto: true
+
 inputs:
   default:
     container_path: MP2RAGE_v1.0.1.simg
@@ -7,14 +8,28 @@ inputs:
     extraflags: ""
   xnat:
     scans:
-      - name: scan_t1
+      - name: scan_mp2rage
         types: MP2RAGE
         needs_qc: False
         resources:
           - resource: NIFTI
             ftype: DIR
-            fdest: T1
-            varname: t1_dir
+            fdest: mp2rage
+            varname: mp2rage_dir
+    attrs:
+      - varname: project
+        object: session
+        attr: project
+      - varname: subject
+        object: session
+        attr: subject_label
+      - varname: session
+        object: session
+        attr: label
+      - varname: scan
+        object: scan
+        attr: ID
+
 outputs:
   - path: OUT/mp2rage.pdf
     type: FILE
@@ -28,15 +43,20 @@ outputs:
   - path: OUT/mag1_brain_mask.nii.gz
     type: FILE
     resource: MASK
+
 command: >-
   singularity
   run
   --bind $INDIR:/INPUTS
   --bind $OUTDIR:/OUTPUTS
   {container_path}
-  --t1_dir /INPUTS/{t1_dir}
+  --mp2rage_dir /INPUTS/{mp2rage_dir}
+  --project {project}
+  --subject {subject}
+  --session {session}
+  --scan {scan}
   -d /OUTPUTS/OUT
-  -a {assessor}
+
 attrs:
   xsitype: proc:genProcData
   walltime: '2:00:00'
