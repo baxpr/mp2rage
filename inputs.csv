@@ -1,5 +1,0 @@
-*.nii.gz,FILE,NIFTI resource of the MP2RAGE scan (multiple files)
-project,FILE,project
-subject,FILE,subject
-session,FILE,session
-scan,FILE,scan

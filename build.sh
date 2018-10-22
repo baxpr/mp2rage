@@ -5,7 +5,11 @@ sudo singularity build MP2RAGE_v1.0.1.simg Singularity
 
 
 # Run it like this:
-# docker run \
-#   --mount type=bind,src=/path/to/INPUTS,dst=/INPUTS \
-#   --mount type=bind,src=/path/to/OUTPUTS,dst=/OUTPUTS \
-#   mp2rage:v2.0.0
+singularity run MP2RAGE_v1.0.1.simg \
+--bind INPUTS:/INPUTS \
+--bind OUTPUTS:/OUTPUTS \
+--mp2rage_dir /INPUTS/NIFTI \
+--project PROJNAME \
+--subject SUBJNAME \
+--session SESSNAME \
+--scan SCANNAME
