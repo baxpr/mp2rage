@@ -37,6 +37,7 @@ Usage:
   mkdir /INPUTS && mkdir /OUTPUTS
 
 %runscript
+  echo "Args: $*"
   xvfb-run --server-num=$(($$ + 99)) \
     --server-args='-screen 0 1600x1200x24 -ac +extension GLX' \
-    bash -c "${CODEDIR}/mp2rage.sh --outdir ${OUTDIR} $@"
+    bash -c "${CODEDIR}"/mp2rage.sh --outdir "${OUTDIR}" "$@"
