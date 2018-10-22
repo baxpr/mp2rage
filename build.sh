@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Build the image:
-docker build . -t mp2rage:v2.0.0
+sudo singularity build MP2RAGE_v1.0.1.simg Singularity
 
 
 # Run it like this:

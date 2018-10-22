@@ -31,16 +31,16 @@ inputs:
         attr: ID
 
 outputs:
-  - path: OUT/mp2rage.pdf
+  - path: mp2rage.pdf
     type: FILE
     resource: PDF
-  - path: OUT/mp2rage.nii.gz
+  - path: mp2rage.nii.gz
     type: FILE
     resource: MP2RAGE
-  - path: OUT/mp2rage_brain.nii.gz
+  - path: mp2rage_brain.nii.gz
     type: FILE
     resource: MP2RAGE_MASKED
-  - path: OUT/mag1_brain_mask.nii.gz
+  - path: mag1_brain_mask.nii.gz
     type: FILE
     resource: MASK
 
@@ -55,7 +55,6 @@ command: >-
   --subject {subject}
   --session {session}
   --scan {scan}
-  -d /OUTPUTS/OUT
 
 attrs:
   xsitype: proc:genProcData

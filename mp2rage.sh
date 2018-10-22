@@ -4,29 +4,59 @@
 #   imagemagick
 #   FSL 5.0
 
+# Parse inputs
+while [[ $# -gt 0 ]]
+do
+  key="$1"
+  case $key in
+    --mp2rage_dir)
+    MP2RAGE_DIR="$2"
+    shift; shift
+	;;
+    --project)
+    PROJECT="$2"
+    shift; shift
+    ;;
+	--subject)
+	SUBJECT="$2"
+	shift; shift
+	;;
+	--session)
+	SESSION="$2"
+	shift; shift
+	;;
+    --scan)
+    SCAN="$2"
+    shift; shift
+    ;;
+	--codedir)
+	CODEDIR="$2"
+	shift; shift
+	;;
+	--outdir)
+	OUTDIR="$2"
+	shift; shift
+	;;
+	*)
+    shift
+    ;;
+  esac
+done
+
+echo MP2RAGE_DIR = "${MP2RAGE_DIR}"
+echo PROJECT     = "${PROJECT}"
+echo SUBJECT     = "${SUBJECT}"
+echo SESSION     = "${SESSION}"
+echo SCAN        = "${SCAN}"
+echo CODEDIR     = "${CODEDIR}"
+echo OUTDIR      = "${OUTDIR}"
+
 # Set up for FSL
-source /code/fslconf.sh
-
-# Get input and output directories from the command line if given
-if [ "$#" -eq 2 ]; then
-    INDIR="${1}"
-	OUTDIR="${2}"
-else
-	INDIR=/INPUTS
-	OUTDIR=/OUTPUTS
-fi
-echo Input directory is "${INDIR}"
-echo Output directory is "${OUTDIR}"
-
-# Get project, subject, session, scan info
-PROJ=`head -1 "${INDIR}/project"`
-SUBJ=`head -1 "${INDIR}/subject"`
-SESS=`head -1 "${INDIR}/session"`
-SCAN=`head -1 "${INDIR}/scan"`
+source "${CODEDIR}"/fslconf.sh
 
 # Find all real input images, relying on recent default dcm2niix filename tagging
 shopt -s nullglob
-REALS=("${INDIR}"/*_real_*.nii.gz)
+REALS=("${MP2RAGE_DIR}"/*_real_*.nii.gz)
 echo Found ${#REALS[@]} real images
 if [ ${#REALS[@]} -eq 0 ] ; then exit 1 ; fi
 for f in ${REALS[@]}; do echo "   ${f}" ; done
@@ -107,9 +137,10 @@ fslmaths ${MP2RAGE} -mas ${OUTDIR}/mag1_brain ${OUTDIR}/mp2rage_brain
 # Make PDF
 slicer ${MP2RAGE} ${OUTDIR}/mag1_brain_mask -l red -x 0.55 ${OUTDIR}/x.png \
     -y 0.5 ${OUTDIR}/y.png -z 0.5 ${OUTDIR}/z.png
-montage -title "$PROJ $SUBJ $SESS $SCAN" -mode concatenate -tile 2x2 \
+montage -title "${PROJECT} ${SUBJECT} ${SESSION} ${SCAN}" -mode concatenate -tile 2x2 \
     ${OUTDIR}/x.png ${OUTDIR}/y.png ${OUTDIR}/z.png ${OUTDIR}/mp2rage.pdf
 
 # Clean up
 rm ${OUTDIR}/tmp*.nii.gz ${OUTDIR}/{x,y,z}.png ${OUTDIR}/mag1.nii.gz \
     ${OUTDIR}/mag1_brain.nii.gz
+

@@ -1,3 +1,6 @@
 INPUTS
+INPUTS_old
 OUTPUTS
 .DS_Store
+localtest.sh
+localdocker.sh
