@@ -9,11 +9,11 @@ inputs:
   xnat:
     scans:
       - name: scan_mp2rage
-        types: MP2RAGE
+        types: 'WIP MP2RAGE_1mm*,WIP MP2RAGE_0p7*'
         needs_qc: False
         resources:
           - resource: NIFTI
-            ftype: DIR
+            ftype: DIRJ
             fdest: mp2rage
             varname: mp2rage_dir
     attrs:
@@ -29,6 +29,7 @@ inputs:
       - varname: scan
         object: scan
         attr: ID
+        ref: scan_mp2rage
 
 outputs:
   - path: mp2rage.pdf
