@@ -4,7 +4,7 @@ moreauto: true
 inputs:
   default:
     container_path: MP2RAGE_v1.0.1.simg
-    container_source: shub://baxterprogers/MP2RAGE:v1.0.1
+    container_source: shub://baxpr/mp2rage:v1.0.1
     extraflags: ""
   xnat:
     scans:
