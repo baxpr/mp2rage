@@ -13,10 +13,9 @@ Usage:
   --scan SCANNAME
 
 %files
-  . /code
+  code /code
 
 %environment
-  export CODEDIR=/code
   export OUTDIR=/OUTPUTS
   export FSLDIR=/usr/share/fsl/5.0
 
@@ -39,4 +38,4 @@ Usage:
 %runscript
   xvfb-run --server-num=$(($$ + 99)) \
     --server-args='-screen 0 1600x1200x24 -ac +extension GLX' \
-    /bin/bash "${CODEDIR}"/mp2rage.sh --outdir "${OUTDIR}" "$@"
+    /bin/bash /code/mp2rage.sh --outdir "${OUTDIR}" "$@"
