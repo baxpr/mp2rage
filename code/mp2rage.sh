@@ -57,13 +57,16 @@ echo Found ${#REALS[@]} real images
 if [ ${#REALS[@]} -eq 0 ] ; then exit 1 ; fi
 for f in ${REALS[@]}; do echo "   ${f}" ; done
 
+# Get base part of filename
+TMP=${REALS[0]%.nii.gz}
+FBASE=${TMP%_real_t*}
+echo Assuming basename "${FBASE}"
+
 # Parse the filenames into useful bits and compute filenames of imaginary images
 for n in ${!REALS[@]} ; do
-	TMP=${REALS[n]%.nii.gz}
-	FBASE[n]=${TMP%_real_t*}
-	FTIME[n]=${TMP#*_real_}
-	unset TMP
-	IMAGS[n]=${FBASE[n]}_imaginary_${FTIME[n]}.nii.gz
+	FTIME[n]=${REALS[n]#"${FBASE}"_real_t}
+	FTIME[n]=${FTIME[n]%.nii.gz}
+	IMAGS[n]=${FBASE}_imaginary_t${FTIME[n]}.nii.gz
 	if [ ! -e ${IMAGS[n]} ] ; then
 		echo Failed to find ${IMAGS[n]}
 		exit 1
@@ -72,27 +75,33 @@ for n in ${!REALS[@]} ; do
 	fi
 done
 
-# Check that we are sorted by inversion time
-if IFS=$'\n' sort -c <<<"${FTIME[*]}" ; then
-	echo "Inversion time sort ok: ${FTIME[*]}"
-else
-	echo "Inversion times out of order: ${FTIME[*]}"
-	exit 1
-fi
+# Re-sort by inversion time
+IFS=$'\n' SFTIME=($(sort -n <<< "${FTIME[*]}")) ; unset IFS
+echo "Initial list of inversion times: ${FTIME[*]}"
+echo "                         Sorted: ${SFTIME[*]}"
+
+echo Sorted images:
+for n in ${!REALS[@]} ; do
+	SREALS[n]="${FBASE}"_real_t"${SFTIME[n]}".nii.gz
+	SIMAGS[n]="${FBASE}"_imaginary_t"${SFTIME[n]}".nii.gz
+	echo "    ${SREALS[n]}"
+	echo "    ${SIMAGS[n]}"
+done
+
 
 # Use the first two inversion times to compute the MP2RAGE
 
 # Magnitude squared images, then mp2rage denominator
 # (abs(GRE_TI1).^2 + abs(GRE_TI2).^2)
 echo Computing MP2RAGE with
-echo "   ${REALS[0]}"
-echo "   ${IMAGS[0]}"
-echo "   ${REALS[1]}"
-echo "   ${IMAGS[1]}"
+echo "   ${SREALS[0]}"
+echo "   ${SIMAGS[0]}"
+echo "   ${SREALS[1]}"
+echo "   ${SIMAGS[1]}"
 for n in 0 1 ; do
-	MAGSQ[n]=${OUTDIR}/tmp_magsq_${FTIME[n]}.nii.gz
-	${FSL}/fslmaths ${REALS[n]} -sqr ${OUTDIR}/tmp_rsqr
-	${FSL}/fslmaths ${IMAGS[n]} -sqr ${OUTDIR}/tmp_isqr
+	MAGSQ[n]=${OUTDIR}/tmp_magsq_${SFTIME[n]}.nii.gz
+	${FSL}/fslmaths ${SREALS[n]} -sqr ${OUTDIR}/tmp_rsqr
+	${FSL}/fslmaths ${SIMAGS[n]} -sqr ${OUTDIR}/tmp_isqr
 	${FSL}/fslmaths ${OUTDIR}/tmp_rsqr -add ${OUTDIR}/tmp_isqr ${MAGSQ[n]}
 done
 DENOM=${OUTDIR}/tmp_denom.nii.gz
@@ -102,9 +111,9 @@ ${FSL}/fslmaths ${MAGSQ[0]} -add ${MAGSQ[1]} ${DENOM}
 # (conj(GRE_TI1).*GRE_TI2)
 # (R0 - iI0) * (R1 + iI1) = R0*R1 + I0*I1 + iR0*I1 - iR1*I0
 TERM1=${OUTDIR}/tmp_term1.nii.gz
-${FSL}/fslmaths ${REALS[0]} -mul ${REALS[1]} ${TERM1}
+${FSL}/fslmaths ${SREALS[0]} -mul ${SREALS[1]} ${TERM1}
 TERM2=${OUTDIR}/tmp_term2.nii.gz
-${FSL}/fslmaths ${IMAGS[0]} -mul ${IMAGS[1]} ${TERM2}
+${FSL}/fslmaths ${SIMAGS[0]} -mul ${SIMAGS[1]} ${TERM2}
 NUMREAL=${OUTDIR}/tmp_numreal.nii.gz
 ${FSL}/fslmaths ${TERM1} -add ${TERM2} ${NUMREAL}
 
