@@ -1,0 +1,64 @@
+---
+moreauto: true
+
+inputs:
+  default:
+    container_path: MP2RAGE_v1.0.1.simg
+    container_source: shub://baxpr/mp2rage:v1.0.1
+    extraflags: ""
+  xnat:
+    scans:
+      - name: scan_mp2rage
+        types: MP2RAGE
+        needs_qc: False
+        resources:
+          - resource: NIFTI
+            ftype: DIR
+            fdest: mp2rage
+            varname: mp2rage_dir
+    attrs:
+      - varname: project
+        object: session
+        attr: project
+      - varname: subject
+        object: session
+        attr: subject_label
+      - varname: session
+        object: session
+        attr: label
+      - varname: scan
+        object: scan
+        attr: ID
+
+outputs:
+  - path: mp2rage.pdf
+    type: FILE
+    resource: PDF
+  - path: mp2rage.nii.gz
+    type: FILE
+    resource: MP2RAGE
+  - path: mp2rage_brain.nii.gz
+    type: FILE
+    resource: MP2RAGE_MASKED
+  - path: mag1_brain_mask.nii.gz
+    type: FILE
+    resource: MASK
+
+command: >-
+  singularity
+  run
+  --bind $INDIR:/INPUTS
+  --bind $OUTDIR:/OUTPUTS
+  {container_path}
+  --mp2rage_dir /INPUTS/{mp2rage_dir}
+  --project {project}
+  --subject {subject}
+  --session {session}
+  --scan {scan}
+
+attrs:
+  xsitype: proc:genProcData
+  walltime: '2:00:00'
+  memory: 8192
+  ppn: 1
+jobtemplate: singularity_job_template.txt
