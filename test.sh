@@ -4,7 +4,7 @@
 singularity run \
 --bind INPUTS:/INPUTS \
 --bind OUTPUTS:/OUTPUTS \
-baxpr-mp2rage-master-v1.0.1.simg \
+baxpr-mp2rage-master-v1.0.2.simg \
 --mp2rage_dir /INPUTS/NIFTI \
 --project PROJNAME \
 --subject SUBJNAME \

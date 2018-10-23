@@ -3,8 +3,8 @@ moreauto: true
 
 inputs:
   default:
-    container_path: baxpr-mp2rage-master-v1.0.1.simg
-    container_source: shub://baxpr/mp2rage:v1.0.1
+    container_path: baxpr-mp2rage-master-v1.0.2.simg
+    container_source: shub://baxpr/mp2rage:v1.0.2
     extraflags: ""
   xnat:
     scans:

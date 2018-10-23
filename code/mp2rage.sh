@@ -60,7 +60,7 @@ for f in ${REALS[@]}; do echo "   ${f}" ; done
 # Parse the filenames into useful bits and compute filenames of imaginary images
 for n in ${!REALS[@]} ; do
 	TMP=${REALS[n]%.nii.gz}
-	FBASE[n]=${TMP%_real_t????}
+	FBASE[n]=${TMP%_real_t*}
 	FTIME[n]=${TMP#*_real_}
 	unset TMP
 	IMAGS[n]=${FBASE[n]}_imaginary_${FTIME[n]}.nii.gz
