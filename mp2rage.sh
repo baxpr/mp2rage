@@ -10,32 +10,32 @@ do
   key="$1"
   case $key in
     --mp2rage_dir)
-    MP2RAGE_DIR="$2"
-    shift; shift
-	;;
+		MP2RAGE_DIR="$2"
+    	shift; shift
+		;;
     --project)
-    PROJECT="$2"
-    shift; shift
-    ;;
+		PROJECT="$2"
+    	shift; shift
+		;;
 	--subject)
-	SUBJECT="$2"
-	shift; shift
-	;;
+		SUBJECT="$2"
+		shift; shift
+		;;
 	--session)
-	SESSION="$2"
-	shift; shift
-	;;
+		SESSION="$2"
+		shift; shift
+		;;
     --scan)
-    SCAN="$2"
-    shift; shift
-    ;;
+    	SCAN="$2"
+    	shift; shift
+    	;;
 	--outdir)
-	OUTDIR="$2"
-	shift; shift
-	;;
+		OUTDIR="$2"
+		shift; shift
+		;;
 	*)
-    shift
-    ;;
+    	shift
+    	;;
   esac
 done
 
