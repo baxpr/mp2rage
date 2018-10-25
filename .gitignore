@@ -2,7 +2,6 @@ INPUTS
 INPUTS_old
 OUTPUTS
 .DS_Store
-localtest.sh
 localdocker.sh
 mp2rage*.simg
 baxpr-mp2rage-master-*.simg
