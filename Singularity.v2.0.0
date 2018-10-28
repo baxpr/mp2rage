@@ -33,6 +33,7 @@ Usage:
   apt-key adv --recv-keys --keyserver hkp://pool.sks-keyservers.net:80 0xA5D32F012649A5A9
 
   # FSL 5.0, packaged version and templates
+  apt-get update
   apt-get install -y fsl-5.0-core fsl-mni152-templates
 
   # Fix imagemagick policy to allow PDF output. See https://usn.ubuntu.com/3785-1/
