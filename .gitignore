@@ -1,6 +1,5 @@
-INPUTS
-INPUTS_old
-OUTPUTS
+INPUTS*
+OUTPUTS*
 .DS_Store
 localdocker.sh
 mp2rage*.simg
