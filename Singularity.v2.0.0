@@ -28,13 +28,14 @@ Usage:
   apt-get install -y imagemagick xvfb wget
 
   # Set up for neurodebian where we can get the FSL atlases
-  wget -O- http://neuro.debian.net/lists/xenial.us-ca.full | \
-    tee /etc/apt/sources.list.d/neurodebian.sources.list
-  apt-key adv --recv-keys --keyserver hkp://pool.sks-keyservers.net:80 0xA5D32F012649A5A9
+  #wget -O- http://neuro.debian.net/lists/xenial.us-ca.full | \
+  #  tee /etc/apt/sources.list.d/neurodebian.sources.list
+  #apt-key adv --recv-keys --keyserver hkp://pool.sks-keyservers.net:80 0xA5D32F012649A5A9
+  #apt-get update
 
-  # FSL 5.0, packaged version and templates
-  apt-get update
-  apt-get install -y fsl-5.0-core fsl-mni152-templates
+  # FSL 5.0, packaged version
+  apt-get install -y fsl-5.0-core
+  #apt-get install -y fsl-mni152-templates
 
   # Fix imagemagick policy to allow PDF output. See https://usn.ubuntu.com/3785-1/
   sed -i 's/rights="none" pattern="PDF"/rights="read | write" pattern="PDF"/' \
