@@ -1,5 +1,8 @@
 ---
 moreauto: true
+procversion: 2.0.0
+procname: mp2rage
+proctype: mp2rage_v2
 
 inputs:
   default:
