@@ -47,7 +47,7 @@ outputs:
   - path: brain_mask.nii.gz
     type: FILE
     resource: BRAIN_MASK
-	
+
 command: >-
   singularity
   run
