@@ -10,32 +10,32 @@ do
   key="$1"
   case $key in
     --mp2rage_dir)
-		MP2RAGE_DIR="$2"
-    	shift; shift
-		;;
+        MP2RAGE_DIR="$2"
+        shift; shift
+        ;;
     --project)
-		PROJECT="$2"
-    	shift; shift
-		;;
-	--subject)
-		SUBJECT="$2"
-		shift; shift
-		;;
-	--session)
-		SESSION="$2"
-		shift; shift
-		;;
+        PROJECT="$2"
+        shift; shift
+        ;;
+    --subject)
+        SUBJECT="$2"
+        shift; shift
+        ;;
+    --session)
+        SESSION="$2"
+        shift; shift
+        ;;
     --scan)
-    	SCAN="$2"
-    	shift; shift
-    	;;
-	--outdir)
-		OUTDIR="$2"
-		shift; shift
-		;;
-	*)
-    	shift
-    	;;
+        SCAN="$2"
+        shift; shift
+        ;;
+    --outdir)
+        OUTDIR="$2"
+        shift; shift
+        ;;
+    *)
+        shift
+        ;;
   esac
 done
 
@@ -64,15 +64,15 @@ echo Assuming basename "${FBASE}"
 
 # Parse the filenames into useful bits and compute filenames of imaginary images
 for n in ${!REALS[@]} ; do
-	FTIME[n]=${REALS[n]#"${FBASE}"_real_t}
-	FTIME[n]=${FTIME[n]%.nii.gz}
-	IMAGS[n]=${FBASE}_imaginary_t${FTIME[n]}.nii.gz
-	if [ ! -e ${IMAGS[n]} ] ; then
-		echo Failed to find ${IMAGS[n]}
-		exit 1
-	else
-		echo Found imaginary: ${IMAGS[n]}
-	fi
+    FTIME[n]=${REALS[n]#"${FBASE}"_real_t}
+    FTIME[n]=${FTIME[n]%.nii.gz}
+    IMAGS[n]=${FBASE}_imaginary_t${FTIME[n]}.nii.gz
+    if [ ! -e ${IMAGS[n]} ] ; then
+        echo Failed to find ${IMAGS[n]}
+        exit 1
+    else
+        echo Found imaginary: ${IMAGS[n]}
+    fi
 done
 
 # Re-sort by inversion time
@@ -82,10 +82,10 @@ echo "                         Sorted: ${SFTIME[*]}"
 
 echo Sorted images:
 for n in ${!REALS[@]} ; do
-	SREALS[n]="${FBASE}"_real_t"${SFTIME[n]}".nii.gz
-	SIMAGS[n]="${FBASE}"_imaginary_t"${SFTIME[n]}".nii.gz
-	echo "    ${SREALS[n]}"
-	echo "    ${SIMAGS[n]}"
+    SREALS[n]="${FBASE}"_real_t"${SFTIME[n]}".nii.gz
+    SIMAGS[n]="${FBASE}"_imaginary_t"${SFTIME[n]}".nii.gz
+    echo "    ${SREALS[n]}"
+    echo "    ${SIMAGS[n]}"
 done
 
 
@@ -99,10 +99,10 @@ echo "   ${SIMAGS[0]}"
 echo "   ${SREALS[1]}"
 echo "   ${SIMAGS[1]}"
 for n in 0 1 ; do
-	MAGSQ[n]=${OUTDIR}/tmp_magsq_${SFTIME[n]}.nii.gz
-	${FSL}/fslmaths ${SREALS[n]} -sqr ${OUTDIR}/tmp_rsqr
-	${FSL}/fslmaths ${SIMAGS[n]} -sqr ${OUTDIR}/tmp_isqr
-	${FSL}/fslmaths ${OUTDIR}/tmp_rsqr -add ${OUTDIR}/tmp_isqr ${MAGSQ[n]}
+    MAGSQ[n]=${OUTDIR}/tmp_magsq_${SFTIME[n]}.nii.gz
+    ${FSL}/fslmaths ${SREALS[n]} -sqr ${OUTDIR}/tmp_rsqr
+    ${FSL}/fslmaths ${SIMAGS[n]} -sqr ${OUTDIR}/tmp_isqr
+    ${FSL}/fslmaths ${OUTDIR}/tmp_rsqr -add ${OUTDIR}/tmp_isqr ${MAGSQ[n]}
 done
 DENOM=${OUTDIR}/tmp_denom.nii.gz
 ${FSL}/fslmaths ${MAGSQ[0]} -add ${MAGSQ[1]} ${DENOM}
@@ -178,6 +178,6 @@ montage -title "${PROJECT} ${SUBJECT} ${SESSION} ${SCAN}" -mode concatenate -til
 # Clean up
 rm ${OUTDIR}/tmp*.nii.gz ${OUTDIR}/{x,y,z}.png ${OUTDIR}/mag1.nii.gz \
     ${OUTDIR}/mag1_brain.nii.gz ${OUTDIR}/mp2rage_brain.nii.gz \
-	${OUTDIR}/nonbrain_mask.nii.gz ${OUTDIR}/mag1_nonbrain.nii.gz \
-	${OUTDIR}/mag1_nonbrain_scaled.nii.gz
+    ${OUTDIR}/nonbrain_mask.nii.gz ${OUTDIR}/mag1_nonbrain.nii.gz \
+    ${OUTDIR}/mag1_nonbrain_scaled.nii.gz
 
