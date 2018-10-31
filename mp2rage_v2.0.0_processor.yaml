@@ -12,7 +12,7 @@ inputs:
   xnat:
     scans:
       - name: scan_mp2rage
-        types: 'WIP MP2RAGE_1mm*,WIP MP2RAGE_0p7*'
+        types: '*MP2RAGE*'
         needs_qc: False
         resources:
           - resource: NIFTI
