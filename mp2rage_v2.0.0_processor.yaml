@@ -21,7 +21,7 @@ inputs:
             varname: mp2rage_dir
     attrs:
       - varname: project
-        object: session
+        object: assessor
         attr: project
       - varname: subject
         object: session
@@ -51,6 +51,7 @@ outputs:
 command: >-
   singularity
   run
+  --cleanenv --contain
   --bind $INDIR:/INPUTS
   --bind $OUTDIR:/OUTPUTS
   {container_path}
