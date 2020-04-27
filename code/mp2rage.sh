@@ -4,6 +4,9 @@
 #   imagemagick
 #   FSL 5.0
 
+# Initialize beta to zero (no adjustment for low-signal voxels)
+BETA=0
+
 # Parse inputs
 while [[ $# -gt 0 ]]
 do
@@ -11,6 +14,10 @@ do
   case $key in
     --mp2rage_dir)
         MP2RAGE_DIR="$2"
+        shift; shift
+        ;;
+    --robust_beta)
+        BETA="$2"
         shift; shift
         ;;
     --project)
@@ -40,6 +47,7 @@ do
 done
 
 echo MP2RAGE_DIR = "${MP2RAGE_DIR}"
+echo BETA        = "${BETA}"
 echo PROJECT     = "${PROJECT}"
 echo SUBJECT     = "${SUBJECT}"
 echo SESSION     = "${SESSION}"
@@ -105,7 +113,8 @@ for n in 0 1 ; do
     ${FSL}/fslmaths ${OUTDIR}/tmp_rsqr -add ${OUTDIR}/tmp_isqr ${MAGSQ[n]}
 done
 DENOM=${OUTDIR}/tmp_denom.nii.gz
-${FSL}/fslmaths ${MAGSQ[0]} -add ${MAGSQ[1]} ${DENOM}
+TWOBETA=$((2 * ${BETA}))
+${FSL}/fslmaths ${MAGSQ[0]} -add ${MAGSQ[1]} -add ${TWOBETA} ${DENOM}
 
 # Numerator, real part
 # (conj(GRE_TI1).*GRE_TI2)
@@ -115,7 +124,7 @@ ${FSL}/fslmaths ${SREALS[0]} -mul ${SREALS[1]} ${TERM1}
 TERM2=${OUTDIR}/tmp_term2.nii.gz
 ${FSL}/fslmaths ${SIMAGS[0]} -mul ${SIMAGS[1]} ${TERM2}
 NUMREAL=${OUTDIR}/tmp_numreal.nii.gz
-${FSL}/fslmaths ${TERM1} -add ${TERM2} ${NUMREAL}
+${FSL}/fslmaths ${TERM1} -add ${TERM2} -sub ${BETA} ${NUMREAL}
 
 # We don't need the imaginary part, but here is the code for it
 #TERM3=${OUTDIR}/tmp_term3.nii.gz
