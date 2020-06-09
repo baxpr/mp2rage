@@ -3,7 +3,7 @@
 # Test within the image
 /opt/code/mp2rage.sh \
 --mp2rage_dir /INPUTS/NIFTI \
---robust_beta 0 \
+--robust_beta 500000 \
 --outdir /OUTPUTS
 
 
