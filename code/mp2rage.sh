@@ -12,7 +12,7 @@ SCAN=NO_SCAN
 OUTDIR=/OUTPUTS
 
 # Initialize default beta to zero (no adjustment for low-signal voxels)
-BETA=0
+BETA=0.1
 
 # Parse inputs
 while [[ $# -gt 0 ]]
@@ -106,7 +106,7 @@ done
 
 # Use the first two inversion times to compute the MP2RAGE
 
-# Magnitude squared images, then mp2rage denominator
+# Magnitude squared images
 # (abs(GRE_TI1).^2 + abs(GRE_TI2).^2)
 echo Computing MP2RAGE with
 echo "   ${SREALS[0]}"
@@ -119,9 +119,31 @@ for n in 0 1 ; do
     ${FSL}/fslmaths ${SIMAGS[n]} -sqr ${OUTDIR}/tmp_isqr
     ${FSL}/fslmaths ${OUTDIR}/tmp_rsqr -add ${OUTDIR}/tmp_isqr ${MAGSQ[n]}
 done
+
+# Compute the magnitude image for the second inversion time
+MAG1=${OUTDIR}/mag1.nii.gz
+${FSL}/fslmaths ${MAGSQ[1]} -sqrt ${MAG1}
+
+# Standard BET on mag1 to get brain mask
+echo Brain extraction
+${FSL}/bet ${MAG1} ${OUTDIR}/mag1_brain -R -m -f 0.2 -g 0
+mv ${OUTDIR}/mag1_brain_mask.nii.gz ${OUTDIR}/brain_mask.nii.gz 
+
+# Denominator without beta first, to get a scaling factor for beta
+DENOM0=${OUTDIR}/tmp_denom0.nii.gz
+${FSL}/fslmaths ${MAGSQ[0]} -add ${MAGSQ[1]} ${DENOM0}
+
+# Mean intensity of denom0 image in brain
+DENOM_MEAN=$(fslstats ${OUTDIR}/tmp_denom0.nii.gz -k ${OUTDIR}/brain_mask.nii.gz -m)
+echo Denom mean intensity is $DENOM_MEAN
+
+# Scale beta
+SBETA=$(echo "${BETA} * ${DENOM_MEAN}" | bc -l)
+
+# Compute denominator with scaled beta
 DENOM=${OUTDIR}/tmp_denom.nii.gz
-TWOBETA=$(echo "2 * ${BETA}" | bc -l)
-${FSL}/fslmaths ${MAGSQ[0]} -add ${MAGSQ[1]} -add ${TWOBETA} ${DENOM}
+TWOSBETA=$(echo "2 * ${SBETA}" | bc -l)
+${FSL}/fslmaths ${MAGSQ[0]} -add ${MAGSQ[1]} -add ${TWOSBETA} ${DENOM}
 
 # Numerator, real part
 # (conj(GRE_TI1).*GRE_TI2)
@@ -131,7 +153,7 @@ ${FSL}/fslmaths ${SREALS[0]} -mul ${SREALS[1]} ${TERM1}
 TERM2=${OUTDIR}/tmp_term2.nii.gz
 ${FSL}/fslmaths ${SIMAGS[0]} -mul ${SIMAGS[1]} ${TERM2}
 NUMREAL=${OUTDIR}/tmp_numreal.nii.gz
-${FSL}/fslmaths ${TERM1} -add ${TERM2} -sub ${BETA} ${NUMREAL}
+${FSL}/fslmaths ${TERM1} -add ${TERM2} -sub ${SBETA} ${NUMREAL}
 
 # We don't need the imaginary part, but here is the code for it
 #TERM3=${OUTDIR}/tmp_term3.nii.gz
@@ -145,19 +167,6 @@ ${FSL}/fslmaths ${TERM1} -add ${TERM2} -sub ${BETA} ${NUMREAL}
 MP2RAGE=${OUTDIR}/mp2rage.nii.gz
 ${FSL}/fslmaths ${NUMREAL} -div ${DENOM} -add 0.5 ${MP2RAGE}
 
-# Compute the magnitude image for the second inversion time
-MAG1=${OUTDIR}/mag1.nii.gz
-${FSL}/fslmaths ${MAGSQ[1]} -sqrt ${MAG1}
-
-# Standard BET to get brain mask
-echo Brain extraction
-${FSL}/bet ${MAG1} ${OUTDIR}/mag1_brain -R -m -f 0.2 -g 0
-mv ${OUTDIR}/mag1_brain_mask.nii.gz ${OUTDIR}/brain_mask.nii.gz 
-
-# Get mean in-brain intensity from second inv time mag img
-INTENSITY=$(fslstats ${MAG1} -k ${OUTDIR}/brain_mask.nii.gz -m)
-echo Intensity is $INTENSITY
-
 # Make PDF
 ${FSL}/slicer ${OUTDIR}/mp2rage \
     -x 0.55 ${OUTDIR}/x.png -y 0.5 ${OUTDIR}/y.png -z 0.5 ${OUTDIR}/z.png
@@ -165,4 +174,4 @@ montage -title "${PROJECT} ${SUBJECT} ${SESSION} ${SCAN}" -mode concatenate -til
     ${OUTDIR}/x.png ${OUTDIR}/y.png ${OUTDIR}/z.png ${OUTDIR}/mp2rage.pdf
 
 # Clean up
-rm ${OUTDIR}/tmp*.nii.gz ${OUTDIR}/{x,y,z}.png
+#rm ${OUTDIR}/tmp*.nii.gz ${OUTDIR}/{x,y,z}.png
