@@ -4,7 +4,14 @@
 #   imagemagick
 #   FSL 5.0
 
-# Initialize beta to zero (no adjustment for low-signal voxels)
+# Some defaults
+PROJECT=NO_PROJ
+SUBJECT=NO_SUBJ
+SESSION=NO_SESS
+SCAN=NO_SCAN
+OUTDIR=/OUTPUTS
+
+# Initialize default beta to zero (no adjustment for low-signal voxels)
 BETA=0
 
 # Parse inputs
