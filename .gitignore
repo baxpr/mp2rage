@@ -4,3 +4,4 @@ OUTPUTS*
 localdocker.sh
 mp2rage*.simg
 baxpr-mp2rage-master-*.simg
+test_vs_matlab
