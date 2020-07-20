@@ -107,7 +107,9 @@ done
 # Use the first two inversion times to compute the MP2RAGE
 
 # Magnitude squared images
-# (abs(GRE_TI1).^2 + abs(GRE_TI2).^2)
+# abs(GRE_TI1)^2, abs(GRE_TI2)^2
+# GRE_TI1 = R1 + iI1
+# abs(GRE_TI1)^2 = R1^2 + I1^2
 echo Computing MP2RAGE with
 echo "   ${SREALS[0]}"
 echo "   ${SIMAGS[0]}"
