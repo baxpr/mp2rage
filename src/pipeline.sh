@@ -24,7 +24,6 @@ do
       --json2)        export json2="$2"; shift; shift;;
       --robust_beta)  export robust_beta="$2"; shift; shift;;
       --wmnull_ms)    export wmnull_ms="$2"; shift; shift;;
-      --robust_beta)  export robust_beta="$2"; shift; shift;;
       --mask_fwhm)    export mask_fwhm="$2"; shift; shift;;
       --efficiency)   export efficiency="$2"; shift; shift;;
       --label)        export label="$2"; shift; shift;;
