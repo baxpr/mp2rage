@@ -1,6 +1,6 @@
 # mp2rage
 
-Reconstructs a T1-weighted image from images at multiple inversion times following Marques et al. 2009. The robust adjustment (beta factor) of O'Brien 2014 is also implemented.
+Reconstructs a T1-weighted image and a quantitative T1 from images at two inversion times following Marques et al. 2010. The robust adjustment (beta factor) of O'Brien 2014 is also implemented.
 
 
 **Marques JP, Kober T, Krueger G, van der Zwaag W, Van de Moortele PF, Gruetter  R. MP2RAGE, a self bias-field corrected sequence for improved segmentation and T1-mapping at high field. Neuroimage. 2010 Jan 15;49(2):1271-81. doi:10.1016/j.neuroimage.2009.10.002. PMID: 19819338.**
