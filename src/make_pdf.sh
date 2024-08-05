@@ -19,7 +19,7 @@ fsleyes render -of wmn.png \
 
 montage \
     -mode concatenate robust.png t1.png wmn.png \
-    -tile 3x -quality 100 -background black -gravity center \
+    -tile 1x3 -quality 100 -background black -gravity center \
     -border 20 -bordercolor black page.png
 
 convert -size 2600x3365 xc:white \
