@@ -42,6 +42,7 @@ mp2rage.py \
     --json1 "${json1}" \
     --real_niigz2 "${real_niigz2}" \
     --imag_niigz2 "${imag_niigz2}" \
+    --json2 "${json2}" \
     --robust_beta "${robust_beta}" \
     --wmnull_ms "${wmnull_ms}" \
     --mask_fwhm "${mask_fwhm}" \
