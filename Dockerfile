@@ -2,7 +2,7 @@
 FROM baxterprogers/fsl-base:v6.0.5.2
 
 # Update python modules
-pip3 install nibabel nilearn pydicom
+RUN pip3 install nibabel nilearn pydicom
 
 # Copy the pipeline code
 COPY src /opt/mp2rage/src
