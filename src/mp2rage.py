@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Following these:
 #   https://github.com/JosePMarques/MP2RAGE-related-scripts
