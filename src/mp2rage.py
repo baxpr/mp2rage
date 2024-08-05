@@ -12,8 +12,24 @@ import nilearn.masking
 import numpy
 import os
 import sys
-
 from pydicom import dcmread
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--dicom', required=True)
+    parser.add_argument('--real_niigz1', required=True)
+    parser.add_argument('--imag_niigz1', required=True)
+    parser.add_argument('--json1', required=True)
+    parser.add_argument('--real_niigz2', required=True)
+    parser.add_argument('--imag_niigz2', required=True)
+    parser.add_argument('--json2', required=True)
+    parser.add_argument('--robust_beta', default=0.1, type=float)
+    parser.add_argument('--wmnull_ms', default=670, type=float)
+    parser.add_argument('--mask_fwhm', default=2.5, type=float)
+    parser.add_argument('--efficiency', default=0.96, type=float)
+    parser.add_argument('--out_dir', required=True)
+    return parser.parse_args()
 
 
 def get_pulseseq_params(json1_file, json2_file, dicom_file):
@@ -119,22 +135,6 @@ def compute_sig_for_t1(prm, T1):
     return(sig_mp2rage)
 
 
-def parse_arguments():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--dicom', required=True)
-    parser.add_argument('--real_niigz1', required=True)
-    parser.add_argument('--imag_niigz1', required=True)
-    parser.add_argument('--json1', required=True)
-    parser.add_argument('--real_niigz2', required=True)
-    parser.add_argument('--imag_niigz2', required=True)
-    parser.add_argument('--json2', required=True)
-    parser.add_argument('--robust_beta', default=0.1, type=float)
-    parser.add_argument('--mask_fwhm', default=2.5, type=float)
-    parser.add_argument('--efficiency', default=0.96, type=float)
-    parser.add_argument('--out_dir', required=True)
-    return parser.parse_args()
-
-
 if __name__ == '__main__':
     
     args = parse_arguments()
@@ -173,7 +173,7 @@ if __name__ == '__main__':
     # Compute regular MP2RAGE "UNI" [-0.5,0.5]
     mp2rage = compute_mp2rage(data1, data2, 0)
     img_mp2rage = nibabel.Nifti1Image(mp2rage, affine)
-    nibabel.save(img_mp2rage, 'mp2rage.nii.gz')
+    nibabel.save(img_mp2rage, os.path.join(args.out_dir, 'mp2rage.nii.gz'))
     
     # Mask out the low signal voxels (set to -0.5)
     #mmp2rage = (
@@ -181,13 +181,13 @@ if __name__ == '__main__':
     #    (1 - img_mask.get_fdata()) * 0.5
     #    )
     #img_mmp2rage = nibabel.Nifti1Image(mmp2rage, affine)
-    #nibabel.save(img_mmp2rage, 'mp2rage_masked.nii.gz')
+    #nibabel.save(img_mmp2rage, os.path.join(args.out_dir, 'mp2rage_masked.nii.gz'))
     
     # Compute robust T1W and shift to [0,1] for sane viewer behavior
     rmp2rage = compute_mp2rage(data1, data2, beta_scaled)
     rmp2rage = rmp2rage + 0.5
     img_rmp2rage = nibabel.Nifti1Image(rmp2rage, affine)
-    nibabel.save(img_rmp2rage, 'mp2rage_robust.nii.gz')
+    nibabel.save(img_rmp2rage, os.path.join(args.out_dir, 'mp2rage_robust.nii.gz'))
 
     # Compute T1 from UNI
     params = get_pulseseq_params(args.json1, args.json2, args.dicom)
@@ -201,4 +201,12 @@ if __name__ == '__main__':
         numpy.multiply(t1data, img_mask.get_fdata()),
         affine
         )
-    nibabel.save(img_t1, 'quant_t1.nii.gz')
+    nibabel.save(img_t1, os.path.join(args.out_dir, 'quant_t1.nii.gz'))
+
+    # Estimate white matter nulled image from T1
+    img_wmn = nibabel.Nifti1Image(
+        numpy.abs(1 - 2 * numpy.exp(-numpy.reciprocal(t1data)*args.wmnull_ms/1000)),
+        affine
+        )
+    nibabel.save(img_wmn, os.path.join(args.out_dir, 'white_matter_nulled.nii.gz'))
+
