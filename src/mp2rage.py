@@ -34,7 +34,7 @@ def parse_arguments():
 
 def get_pulseseq_params(json1_file, json2_file, dicom_file):
     '''
-    MP2RAGE prm for a specific VUIIS custom
+    MP2RAGE params for a specific VUIIS custom
     pulse sequence on Philips. Time units sec
     '''
     with open(json1_file, 'r') as json1_data:
@@ -189,7 +189,7 @@ if __name__ == '__main__':
     img_rmp2rage = nibabel.Nifti1Image(rmp2rage, affine)
     nibabel.save(img_rmp2rage, os.path.join(args.out_dir, 'mp2rage_robust.nii.gz'))
 
-    # Compute T1 from UNI
+    # Compute T1 from UNI. Mask and save to file
     params = get_pulseseq_params(args.json1, args.json2, args.dicom)
     ref_t1 = numpy.arange(0.05, 5, 0.05)
     ref_signal = numpy.array([compute_sig_for_t1(params, x) for x in ref_t1])
