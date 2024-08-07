@@ -2,6 +2,7 @@
 
 Reconstructs a T1-weighted image and a quantitative T1 from MPRAGE images at two inversion times following Marques et al. 2010. The robust adjustment (beta factor) of O'Brien 2014 and the white matter nulled image described by Metere 2017 are also implemented.
 
+For the quantitative T1 calculation, pulse sequence timing parameters are extracted from the DICOM (some via dcm2niix). A Philips scanner is assumed, with a particular usage of the cardiac trigger loop. This likely doesn't generalize to other configurations.
 
 **Marques JP, Kober T, Krueger G, van der Zwaag W, Van de Moortele PF, Gruetter  R. MP2RAGE, a self bias-field corrected sequence for improved segmentation and T1-mapping at high field. Neuroimage. 2010 Jan 15;49(2):1271-81. doi:10.1016/j.neuroimage.2009.10.002. PMID: 19819338.**
 
