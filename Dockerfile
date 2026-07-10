@@ -6,6 +6,7 @@ RUN pip3 install nibabel nilearn pydicom
 
 # Copy the pipeline code
 COPY src /opt/mp2rage/src
+COPY processors /opt/mp2rage/processors
 COPY README.md /opt/mp2rage/README.md
 
 # Add pipeline to system path
