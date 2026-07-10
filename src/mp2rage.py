@@ -189,24 +189,29 @@ if __name__ == '__main__':
     img_rmp2rage = nibabel.Nifti1Image(rmp2rage, affine)
     nibabel.save(img_rmp2rage, os.path.join(args.out_dir, 'mp2rage_robust.nii.gz'))
 
-    # Compute T1 from UNI. Mask and save to file
-    params = get_pulseseq_params(args.json1, args.json2, args.dicom)
-    ref_t1 = numpy.arange(0.05, 5, 0.05)
-    ref_signal = numpy.array([compute_sig_for_t1(params, x) for x in ref_t1])
-    inds = numpy.argsort(ref_signal)
-    ref_signal = ref_signal[inds]
-    ref_t1 = ref_t1[inds]
-    t1data = numpy.interp(mp2rage, ref_signal, ref_t1, left=5, right=0)
-    img_t1 = nibabel.Nifti1Image(
-        numpy.multiply(t1data, img_mask.get_fdata()),
-        affine
-        )
-    nibabel.save(img_t1, os.path.join(args.out_dir, 'quant_t1.nii.gz'))
+    # If we have json/dicom files, we can additionally compute quant T1 and WMN
+    if os.path.exists(args.json1) and os.path.exists(args.json2) and os.path.exists(args.dicom):
 
-    # Estimate white matter nulled image from T1
-    img_wmn = nibabel.Nifti1Image(
-        numpy.abs(1 - 2 * numpy.exp(-numpy.reciprocal(t1data)*args.wmnull_ms/1000)),
-        affine
-        )
-    nibabel.save(img_wmn, os.path.join(args.out_dir, 'white_matter_nulled.nii.gz'))
+        # Compute T1 from UNI. Mask and save to file
+        params = get_pulseseq_params(args.json1, args.json2, args.dicom)
+        ref_t1 = numpy.arange(0.05, 5, 0.05)
+        ref_signal = numpy.array([compute_sig_for_t1(params, x) for x in ref_t1])
+        inds = numpy.argsort(ref_signal)
+        ref_signal = ref_signal[inds]
+        ref_t1 = ref_t1[inds]
+        t1data = numpy.interp(mp2rage, ref_signal, ref_t1, left=5, right=0)
+        img_t1 = nibabel.Nifti1Image(
+            numpy.multiply(t1data, img_mask.get_fdata()),
+            affine
+            )
+        nibabel.save(img_t1, os.path.join(args.out_dir, 'quant_t1.nii.gz'))
 
+        # Estimate white matter nulled image from T1
+        img_wmn = nibabel.Nifti1Image(
+            numpy.abs(1 - 2 * numpy.exp(-numpy.reciprocal(t1data)*args.wmnull_ms/1000)),
+            affine
+            )
+        nibabel.save(img_wmn, os.path.join(args.out_dir, 'white_matter_nulled.nii.gz'))
+
+    else:
+        print('At least one of json or dicom files not found - skipping qT1 and WMN')
