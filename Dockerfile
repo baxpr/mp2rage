@@ -1,5 +1,5 @@
 # Start with FSL, ImageMagick, python3/pandas base docker
-FROM baxterprogers/fsl-base:v6.0.5.2
+FROM docker://baxterprogers/fsl-base:v6.0.5.2
 
 # Update python modules
 RUN pip3 install nibabel nilearn pydicom
