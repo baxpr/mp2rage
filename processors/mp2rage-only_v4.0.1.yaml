@@ -3,8 +3,8 @@ procyamlversion: 3.0.0-dev.0
 
 containers:
   - name: mp2rage
-    path: mp2rage_v4.0.0.sif
-    source: docker://baxterprogers/mp2rage:v4.0.0
+    path: mp2rage_v4.0.1.sif
+    source: docker://baxterprogers/mp2rage:v4.0.1
 
 requirements:
   walltime: '0-04:00:00'
