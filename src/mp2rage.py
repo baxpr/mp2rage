@@ -73,7 +73,7 @@ def compute_mp2rage(data1, data2, beta):
             numpy.conj(data1),
             data2
             )) - beta
-    denom = numpy.square(numpy.abs(data1) + numpy.abs(data2)) + 2 * beta
+    denom = numpy.square(numpy.abs(data1)) + numpy.square(numpy.abs(data2)) + 2 * beta
     return numpy.divide(numer, denom)
 
 
@@ -165,14 +165,17 @@ if __name__ == '__main__':
     nibabel.save(img_mask, os.path.join(args.out_dir, 'mask.nii.gz'))
 
     # Compute beta param for robust method based on in-mask values
-    denom = numpy.square(numpy.abs(data1) + numpy.abs(data2))
+    denom = numpy.square(numpy.abs(data1)) + numpy.square(numpy.abs(data2))
     img_denom = nibabel.Nifti1Image(denom, affine)
     denom_mean = numpy.mean(nilearn.masking.apply_mask(img_denom, img_mask))
+    print(f'Denom mean intensity is {denom_mean}')
     beta_scaled = args.robust_beta * denom_mean
 
-    # Compute regular MP2RAGE "UNI" [-0.5,0.5]
+    # Compute regular MP2RAGE "UNI" [-0.5,0.5] and shifted version for [0,1] range
     mp2rage = compute_mp2rage(data1, data2, 0)
-    img_mp2rage = nibabel.Nifti1Image(mp2rage, affine)
+    img_mp2rageUNI = nibabel.Nifti1Image(mp2rage, affine)
+    nibabel.save(img_mp2rageUNI, os.path.join(args.out_dir, 'mp2rage_UNI.nii.gz'))
+    img_mp2rage = nibabel.Nifti1Image(mp2rage + 0.5, affine)
     nibabel.save(img_mp2rage, os.path.join(args.out_dir, 'mp2rage.nii.gz'))
     
     # Mask out the low signal voxels (set to -0.5)

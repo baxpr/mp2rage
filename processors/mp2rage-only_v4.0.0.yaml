@@ -1,0 +1,60 @@
+---
+procyamlversion: 3.0.0-dev.0
+
+containers:
+  - name: mp2rage
+    path: mp2rage_v4.0.0.sif
+    source: docker://baxterprogers/mp2rage:v4.0.0
+
+requirements:
+  walltime: '0-04:00:00'
+  memory: 8G
+
+jobtemplate: job_template_v3.txt
+
+inputs:
+
+  xnat:
+
+    scans:
+      - name: scan_mp2rage
+        types: 'radMP2RAGE'
+        needs_qc: False
+        resources:
+          - {resource: NIFTI, ftype: FILE, fmatch: '*real_t1???.nii.gz', fdest: 'real1.nii.gz'}
+          - {resource: NIFTI, ftype: FILE, fmatch: '*imaginary_t1???.nii.gz', fdest: 'imag1.nii.gz'}
+          - {resource: NIFTI, ftype: FILE, fmatch: '*real_t3???.nii.gz', fdest: real2.nii.gz}
+          - {resource: NIFTI, ftype: FILE, fmatch: '*imaginary_t3???.nii.gz', fdest: 'imag2.nii.gz'}
+
+    attrs:
+      - {varname: project, object: assessor, attr: project                         }
+      - {varname: subject, object: session,  attr: subject_label                   }
+      - {varname: session, object: session,  attr: label                           }
+      - {varname: scan,    object: scan,     attr: ID,            ref: scan_mp2rage}
+
+
+outputs:
+  - {path: mp2rage.pdf, type: FILE, resource: PDF}
+  - {path: mask.nii.gz, type: FILE, resource: MASK}
+  - {path: mp2rage_UNI.nii.gz, type: FILE, resource: MP2RAGE_UNI}
+  - {path: mp2rage.nii.gz, type: FILE, resource: MP2RAGE}
+  - {path: mp2rage_robust.nii.gz, type: FILE, resource: MP2RAGE_ROBUST}
+
+
+command:
+  type: singularity_run
+  container: mp2rage
+  args: >-
+        --dicom NONE
+        --real_niigz1 /INPUTS/real1.nii.gz
+        --imag_niigz1 /INPUTS/imag1.nii.gz
+        --json1 NONE
+        --real_niigz2 /INPUTS/real2.nii.gz
+        --imag_niigz2 /INPUTS/imag2.nii.gz
+        --json2 NONE
+        --robust_beta 0.1
+        --wmnull_ms 670
+        --mask_fwhm 2.5
+        --efficiency 0.96
+        --label "{project} {subject} {session} {scan}"
+        --out_dir /OUTPUTS
