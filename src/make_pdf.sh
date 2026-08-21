@@ -2,25 +2,41 @@
 
 cd "${out_dir}"
 
+fsleyes render -of plain.png \
+    --scene ortho --displaySpace world --size 1800 600 \
+    --layout horizontal --hideCursor \
+    mp2rage.nii.gz
+
 fsleyes render -of robust.png \
     --scene ortho --displaySpace world --size 1800 600 \
     --layout horizontal --hideCursor \
     mp2rage_robust.nii.gz
 
-fsleyes render -of t1.png \
-    --scene ortho --displaySpace world --size 1800 600 \
-    --layout horizontal --hideCursor \
-    quant_t1.nii.gz
+if [ -e quant_t1.nii.gz ]; then
 
-fsleyes render -of wmn.png \
-    --scene ortho --displaySpace world --size 1800 600 \
-    --layout horizontal --hideCursor \
-    white_matter_nulled.nii.gz
+	fsleyes render -of t1.png \
+    	--scene ortho --displaySpace world --size 1800 600 \
+    	--layout horizontal --hideCursor \
+    	quant_t1.nii.gz
 
-montage \
-    -mode concatenate robust.png t1.png wmn.png \
-    -tile 1x3 -quality 100 -background black -gravity center \
-    -border 20 -bordercolor black page.png
+	fsleyes render -of wmn.png \
+    	--scene ortho --displaySpace world --size 1800 600 \
+    	--layout horizontal --hideCursor \
+    	white_matter_nulled.nii.gz
+
+	montage \
+    	-mode concatenate plain.png robust.png t1.png wmn.png \
+    	-tile 2x2 -quality 100 -background black -gravity center \
+    	-border 20 -bordercolor black page.png
+
+else
+
+	montage \
+    	-mode concatenate plain.png robust.png \
+    	-tile 1x2 -quality 100 -background black -gravity center \
+    	-border 20 -bordercolor black page.png
+
+fi
 
 convert -size 2600x3365 xc:white \
         -gravity center \( page.png -resize 2400x \) -composite \
